@@ -59,7 +59,9 @@ if st.button("Send"):
         st.session_state.chat_history.append({"message": user_input, "is_user": True})
         response = get_llm_response(user_input)
         st.session_state.chat_history.append({"message": response, "is_user": False})
-    st.session_state.input = ""
+        # Clear the input box after sending the message
+        st.experimental_rerun()
 
 for chat in st.session_state.chat_history:
     message(chat["message"], is_user=chat["is_user"])
+
