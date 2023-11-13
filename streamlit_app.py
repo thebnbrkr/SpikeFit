@@ -50,7 +50,7 @@ def get_llm_response(user_input):
     return post_model_outputs_response.outputs[0].data.text.raw
 
 # Streamlit UI with Chat
-st.title('LLM Testing Sandbox with Chat Interface')
+st.title('SpikeFit Mental Health Beta')
 
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
