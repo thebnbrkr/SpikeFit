@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_chat import message
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
@@ -40,18 +41,25 @@ def get_llm_response(user_input):
 
     # Error handling
     if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
-        st.error("Error in model response")
-        return "Error: " + post_model_outputs_response.status.description
+        return "Error in model response: " + post_model_outputs_response.status.description
 
     # Return the response
     return post_model_outputs_response.outputs[0].data.text.raw
 
-# Streamlit UI
-st.title('LLM Testing Sandbox')
+# Streamlit UI with Chat
+st.title('LLM Testing Sandbox with Chat Interface')
 
-user_input = st.text_input("Enter your text here", "")
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
 
-if user_input:
-    response = get_llm_response(user_input)
-    st.text_area("Model Response", response, height=300)
+user_input = st.text_input("Enter your text here", key="input")
 
+if st.button("Send"):
+    if user_input:
+        st.session_state.chat_history.append({"message": user_input, "is_user": True})
+        response = get_llm_response(user_input)
+        st.session_state.chat_history.append({"message": response, "is_user": False})
+    st.session_state.input = ""
+
+for chat in st.session_state.chat_history:
+    message(chat["message"], is_user=chat["is_user"])
