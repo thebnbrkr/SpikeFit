@@ -62,6 +62,6 @@ if st.button("Send"):
         # Clear the input box after sending the message
         st.experimental_rerun()
 
-for chat in st.session_state.chat_history:
-    message(chat["message"], is_user=chat["is_user"])
-
+# Display messages with unique keys
+for i, chat in enumerate(st.session_state.chat_history):
+    message(chat["message"], is_user=chat["is_user"], key=str(i))
