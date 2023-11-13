@@ -27,7 +27,7 @@ def get_llm_response(user_input):
         ),
         metadata=metadata
     )
-
+ 
     # Error handling
     if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
         st.error("Error in model response")
