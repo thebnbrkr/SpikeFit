@@ -5,7 +5,7 @@ from clarifai_grpc.grpc.api.status import status_code_pb2
 import os
 
 # Your ClarifAI API details
-PAT = 'your_personal_access_token'  # Replace with your actual PAT
+PAT = 'e5ad9750c6304cd39beac45f708199de'  
 USER_ID = 'meta'
 APP_ID = 'Llama-2'
 MODEL_ID = 'llama2-70b-chat'
