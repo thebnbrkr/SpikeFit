@@ -3,7 +3,7 @@ from streamlit_chat import message
 import requests
 
 # Streamlit UI with Chat
-st.title('Virtual Psychologist and Dietitian Chat')
+st.title('SpikeFit Mental Health Chat')
 
 # Define the instruction template
 template = """[INST] <<SYS>> You are a virtual psychologist trained in Cognitive Behavioral Therapy (CBT) principles. \
