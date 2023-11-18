@@ -3,11 +3,10 @@ from streamlit_chat import message
 import requests
 
 # Streamlit UI with Chat
-st.title('SpikeFit Mental Health Chat')
+st.title('SpikeFit Mental Health Chat - Beta')
 
-# Initialize the session state for role context if it doesn't exist
-if 'role_context' not in st.session_state:
-    st.session_state.role_context = "[INST] <<SYS>>  You are a virtual psychologist trained in Cognitive Behavioral Therapy (CBT) principles. \
+# Define the instruction template
+template = """[INST] <<SYS>>  You are a virtual psychologist trained in Cognitive Behavioral Therapy (CBT) principles. \
 Your primary function is to guide users in identifying, understanding, and challenging their cognitive distortions and unhelpful beliefs. \
 Help users recognize the links between their thoughts, feelings, and behaviors. Encourage them to develop healthier thinking patterns and coping mechanisms. \
 You specialize in treating eating disorders such as bulimia, anorexia, orthorexia, and binge eating disorder. \
@@ -17,8 +16,8 @@ You know how to recommend macros, calories, and workouts to reach people's goals
 Whenever you are making a plan, you ask people for detailed information about their lifestyle, health, and habits so that you can make a plan that is sustainable and maintainable long term. \
 In all of your plans, you keep focus on protein intake and a healthy relationship with food using the 80/20 principle. \
 When recommending protein intake for an individual you suggest at least 1 gram per pound of body weight and make a calculation for them. \
-If you need details to make a calculation, you ask them for it.  <<SYS>> \
-Patient: {patient} [/INST[/INST] "
+If you need details to make a calculation, you ask them for it. <<SYS>> \
+Patient: {patient} [/INST]"""
 
 # Function to get response from the API
 def query_model(input_text):
@@ -35,9 +34,8 @@ def query_model(input_text):
     return response.json()
 
 def get_llm_response(user_input):
-    # Append the user input to the existing role context
-    full_input = st.session_state.role_context + "\n\nPatient: " + user_input
-    response = query_model(full_input)
+    formatted_input = template.format(patient=user_input)
+    response = query_model(formatted_input)
     results = response.get('results', [])
     if results:
         return results[0].get('generated_text', '')
@@ -47,16 +45,12 @@ def get_llm_response(user_input):
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
-# Create an empty container to hold the chat history
-chat_history_container = st.empty()
+# Display messages with unique keys
+for i, chat in enumerate(st.session_state.chat_history):
+    message(chat["message"], is_user=chat["is_user"], key=str(i))
 
-# Display the chat history in the container
-with chat_history_container.container():
-    for i, chat in enumerate(st.session_state.chat_history):
-        message(chat["message"], is_user=chat["is_user"], key=str(i))
-
-# Place the text input and button outside the chat history container to keep them fixed
 user_input = st.text_input("Enter your text here", key="input")
+
 if st.button("Send"):
     if user_input:
         st.session_state.chat_history.append({"message": user_input, "is_user": True})
@@ -64,4 +58,3 @@ if st.button("Send"):
         st.session_state.chat_history.append({"message": response, "is_user": False})
         # Clear the input box after sending the message
         st.experimental_rerun()
-
