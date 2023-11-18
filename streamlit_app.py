@@ -45,28 +45,20 @@ def get_llm_response(user_input):
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
-# Create a container for messages and keep it at the top
-message_container = st.container()
+# Create an empty container to hold the chat history
+chat_history_container = st.empty()
 
-# Create an empty container that will be populated with the text input later
-input_container = st.empty()
-
-# Display messages with unique keys within the message container
-with message_container:
+# Display the chat history in the container
+with chat_history_container.container():
     for i, chat in enumerate(st.session_state.chat_history):
         message(chat["message"], is_user=chat["is_user"], key=str(i))
 
-# Populate the input container with text input and a button, which will remain fixed at the bottom
-with input_container:
-    user_input = st.text_input("Enter your text here", key="input")
-    if st.button("Send"):
-        if user_input:
-            st.session_state.chat_history.append({"message": user_input, "is_user": True})
-            response = get_llm_response(user_input)
-            st.session_state.chat_history.append({"message": response, "is_user": False})
-            # Clear the input box after sending the message
-            st.experimental_rerun()
-
-# Scroll the last message into view
-if st.session_state.chat_history:
-    st.script_request_queue.enqueue('scrollTo', {'id': str(len(st.session_state.chat_history) - 1), 'align': 'bottom'})
+# Place the text input and button outside the chat history container to keep them fixed
+user_input = st.text_input("Enter your text here", key="input")
+if st.button("Send"):
+    if user_input:
+        st.session_state.chat_history.append({"message": user_input, "is_user": True})
+        response = get_llm_response(user_input)
+        st.session_state.chat_history.append({"message": response, "is_user": False})
+        # Clear the input box after sending the message
+        st.experimental_rerun()
