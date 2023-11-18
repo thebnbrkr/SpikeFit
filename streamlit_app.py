@@ -45,6 +45,10 @@ def get_llm_response(user_input):
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
+# Display messages with unique keys
+for i, chat in enumerate(st.session_state.chat_history):
+    message(chat["message"], is_user=chat["is_user"], key=str(i))
+
 user_input = st.text_input("Enter your text here", key="input")
 
 if st.button("Send"):
@@ -55,7 +59,5 @@ if st.button("Send"):
         # Clear the input box after sending the message
         st.experimental_rerun()
 
-# Display messages with unique keys
-for i, chat in enumerate(st.session_state.chat_history):
-    message(chat["message"], is_user=chat["is_user"], key=str(i))
+
 
