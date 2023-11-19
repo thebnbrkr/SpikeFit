@@ -28,7 +28,8 @@ def query_model(input_text):
     }
     data_payload = {
         "input": input_text,
-        "stream": False
+        "stream": False,
+        "max_new_tokens": 600 #Maximum 600 token per output
     }
     response = requests.post(api_url, headers=headers, json=data_payload)
     return response.json()
